@@ -8,10 +8,10 @@ import 'package:meals/widgets/category_grid_item.dart';
 class categoriesScreen extends StatelessWidget {
   const categoriesScreen(
       {super.key,
-      required this.onToggleFavourite,
+      // required this.onToggleFavourite,
       required this.avaialbeMeals});
 
-  final void Function(Meal meal) onToggleFavourite; //for favourite
+  // final void Function(Meal meal) onToggleFavourite; //for favourite
   final List<Meal> avaialbeMeals;
 
   //it's ok to use a function in a stateless widget here, because we are not really updating the state of the widget itself, only naviagating to another widget
@@ -30,7 +30,7 @@ class categoriesScreen extends StatelessWidget {
         builder: (context) => MealsScreen(
           title: category.title,
           meals: filteredMeals,
-          onToggleFavourite: onToggleFavourite,
+          // onToggleFavourite: onToggleFavourite,
         ),
       ),
     );

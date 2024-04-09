@@ -3,54 +3,50 @@ import 'package:meals/data/dummy_data.dart';
 import 'package:meals/screens/categories.dart';
 import 'package:meals/screens/filters.dart';
 import 'package:meals/screens/meals.dart';
-import 'package:meals/models/meal.dart';
+// import 'package:meals/models/meal.dart';
 import 'package:meals/widgets/main_drawer.dart';
-import 'package:meals/screens/filters.dart';
+// import 'package:meals/screens/filters.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meals/providers/meals_provider.dart';
+import 'package:meals/providers/favorites_provider.dart';
+import 'package:meals/providers/filters_provider.dart';
 
 const kinitialFilters = {Filter.glutenFree: false};
 
-class TabsScreen extends StatefulWidget {
+class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});
 
   @override
-  State<TabsScreen> createState() => _TabsScreenState();
+  ConsumerState<TabsScreen> createState() => _TabsScreenState();
 }
 
-class _TabsScreenState extends State<TabsScreen> {
+class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedPageIndex = 0;
-  final List<Meal> _favouriteMeals = [];
-  Map<Filter, bool> _selectedFilters = kinitialFilters;
+  // final List<Meal> _favouriteMeals = [];
+  // Map<Filter, bool> _selectedFilters = kinitialFilters;
 
-  void _showInfoMessage(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
-  }
+  //no longer needed since we migrated to Notifier
+  // void _toggleMealFavouriteStatus(Meal meal) {
+  //   // check if meal is in favourite meals or not
+  //   final isExisting = _favouriteMeals.contains(meal);
+  //   if (isExisting) {
+  //     setState(
+  //       () {
+  //         _favouriteMeals.remove(meal);
+  //       },
+  //     );
+  //     _showInfoMessage("Meal is no longer a favourite");
+  //   } else {
+  //     setState(
+  //       () {
+  //         _favouriteMeals.add(meal);
+  //       },
+  //     );
+  //     _showInfoMessage("Meal is now a favourite");
+  //   }
 
-  void _toggleMealFavouriteStatus(Meal meal) {
-    // check if meal is in favourite meals or not
-    final isExisting = _favouriteMeals.contains(meal);
-    if (isExisting) {
-      setState(
-        () {
-          _favouriteMeals.remove(meal);
-        },
-      );
-      _showInfoMessage("Meal is no longer a favourite");
-    } else {
-      setState(
-        () {
-          _favouriteMeals.add(meal);
-        },
-      );
-      _showInfoMessage("Meal is now a favourite");
-    }
-
-    print(_favouriteMeals);
-  }
+  //   print(_favouriteMeals);
+  // }
 
   //for the bottomTabView Navigation
   void _selectPage(int index) {
@@ -71,43 +67,39 @@ class _TabsScreenState extends State<TabsScreen> {
       //
       //since it returns a dynamic type, we have made it return Map<Filter,bool> here, beacuse that is what
       //we will return in the pop method from filters screen
-      final result = await Navigator.push<Map<Filter, bool>>(
+      await Navigator.push<Map<Filter, bool>>(
         context,
         MaterialPageRoute(
           builder: (context) => FiltersScreen(
-            currenFliters: _selectedFilters,
-          ),
+              // currenFliters: _selectedFilters,
+              ),
         ),
       );
       //to set the state of the filteredMealTypes
-      setState(() {
-        _selectedFilters = result ?? kinitialFilters;
-      });
+      // setState(() {
+      //   _selectedFilters = result ?? kinitialFilters;
+      // });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    //for passing to catagories screnn if the meals were filtered.
-    final availableMeals = dummyMeals.where(
-      (element) {
-        if (_selectedFilters[Filter.glutenFree]! && !element.isGlutenFree) {
-          return false; //select meals that are only glutenFree
-        }
-        return true;
-      },
-    ).toList();
+    final availableMeals = ref.watch(filteredMealsProvider);
 
     Widget activePage = categoriesScreen(
       avaialbeMeals: availableMeals,
-      onToggleFavourite: _toggleMealFavouriteStatus,
+      // onToggleFavourite: _toggleMealFavouriteStatus,
     );
     var activePagetitle = 'categories';
+    //
+    //set up a watcher to favoriteMealProvider:
+    final favoriteMeals = ref.watch(favoriteMealsProvider); //yields List<Meal>
+    //
     if (_selectedPageIndex == 1) {
       activePage = MealsScreen(
           //title: we don't set the title here to ensure that there won't be a scaffold here
-          onToggleFavourite: _toggleMealFavouriteStatus,
-          meals: _favouriteMeals);
+          // onToggleFavourite: _toggleMealFavouriteStatus,
+          meals: favoriteMeals);
       activePagetitle = "favourites";
     }
 

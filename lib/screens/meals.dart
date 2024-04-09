@@ -3,16 +3,17 @@ import 'package:meals/models/meal.dart';
 import 'package:meals/widgets/meal_item.dart';
 
 class MealsScreen extends StatelessWidget {
-  const MealsScreen(
-      {super.key,
-      this.title,
-      required this.meals,
-      required this.onToggleFavourite});
+  const MealsScreen({
+    super.key,
+    this.title,
+    required this.meals,
+    // required this.onToggleFavourite
+  });
 
   final String?
       title; //we made it nullable and optional, to avoid the issue with rendering 2 scaffolds in the tabBarView
   final List<Meal> meals;
-  final void Function(Meal meal) onToggleFavourite; //for favourite
+  // final void Function(Meal meal) onToggleFavourite; //for favourite
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class MealsScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return Meal_Item(
             meal: meals[index],
-            onToggleFavourite: onToggleFavourite,
+            // onToggleFavourite: onToggleFavourite,
           );
         },
       );
